@@ -16,8 +16,6 @@ services:
   backend:
     <<: *defaults
     image: ghcr.io/rangelovkiril/hacktues12-backend:latest
-    # environment:
-
     ports:
       - "3000:3000"
     depends_on:
@@ -27,7 +25,6 @@ services:
   frontend:
     <<: *defaults
     image: ghcr.io/rangelovkiril/hacktues12-frontend:latest
-    # environment:
     ports:
       - "3001:3001"
     depends_on:
@@ -38,16 +35,20 @@ services:
     <<: *defaults
     image: eclipse-mosquitto:2.0.20
     container_name: mosquitto
+    command: >
+      sh -c 'printf "listener 1883\nallow_anonymous true\npersistence true\npersistence_location /mosquitto/data/\nlog_dest stdout\n"
+      > /mosquitto/config/mosquitto.conf &&
+      exec mosquitto -c /mosquitto/config/mosquitto.conf'
     expose:
       - "1883"
     volumes:
-      - ./broker/config:/mosquitto/config
-      - ./broker/data:/mosquitto/data
-      - ./broker/log:/mosquitto/log
+      - mosquitto-data:/mosquitto/data
     healthcheck:
-      test: ["CMD-SHELL", "mosquitto_pub -t healthcheck -n -q 1 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD-SHELL", "nc -z localhost 1883 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
       start_period: 10s
 
+volumes:
+  mosquitto-data:
