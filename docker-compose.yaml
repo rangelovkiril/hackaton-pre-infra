@@ -15,7 +15,7 @@ networks:
 services:
   backend:
     <<: *defaults
-    image: ghcr.io/rangelovkiril/hackaton-pre/backend:latest
+    image: ghcr.io/rangelovkiril/hacktues12-backend:latest
     # environment:
 
     ports:
@@ -26,7 +26,7 @@ services:
 
   frontend:
     <<: *defaults
-    image: ghcr.io/rangelovkiril/hackaton-pre/frontend:latest
+    image: ghcr.io/rangelovkiril/hacktues12-frontend:latest
     # environment:
     ports:
       - "3001:3001"
