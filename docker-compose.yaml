@@ -41,7 +41,7 @@ services:
     expose:
       - "1883"
     volumes:
-      - ./broker/config:/mosquitto/config:ro
+      - ./broker/config:/mosquitto/config
       - ./broker/data:/mosquitto/data
       - ./broker/log:/mosquitto/log
     healthcheck:
