@@ -35,14 +35,12 @@ services:
     <<: *defaults
     image: eclipse-mosquitto:2.0.20
     container_name: mosquitto
-    command: >
-      sh -c 'printf "listener 1883\nallow_anonymous true\npersistence true\npersistence_location /mosquitto/data/\nlog_dest stdout\n"
-      > /mosquitto/config/mosquitto.conf &&
-      exec mosquitto -c /mosquitto/config/mosquitto.conf'
     expose:
       - "1883"
     volumes:
+      - ./broker/config:/mosquitto/config
       - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
     healthcheck:
       test: ["CMD-SHELL", "nc -z localhost 1883 || exit 1"]
       interval: 10s
@@ -50,5 +48,13 @@ services:
       retries: 5
       start_period: 10s
 
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30 --cleanup
+    restart: unless-stopped
+
 volumes:
   mosquitto-data:
+  mosquitto-log:
